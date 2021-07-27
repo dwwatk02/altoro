@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Configuration>
+  <Targets>
+    <Target path="">
+      <Exclude>DVWA-master/.github/workflows/shiftleft-analysis.yml</Exclude>
+      <Exclude>DVWA-master/tests/test_url.py</Exclude>
+      <Exclude>DVWA-master/external/phpids/0.6/tests/coverage/container-min.js</Exclude>
+      <Exclude>DVWA-master/.github/workflows/codeql-analysis.yml</Exclude>
+      <Exclude>DVWA-master/.github/workflows/pytest.yml</Exclude>
+    </Target>
+  </Targets>
+</Configuration>
