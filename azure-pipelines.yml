@@ -8,8 +8,6 @@ name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 
 trigger: none
 
-pr: none
-
 stages :
   - stage: example
     jobs:
@@ -25,6 +23,7 @@ stages :
             
             ADO_API=$(echo "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/3/threads?api-version=7.1-preview.1")
             echo $ADO_API
+            echo $(System.PullRequest.PullRequestId)
             PR_COMMENT=$(jq --arg comment "$COMMENT" '.comments[0].content = $comment' <<< '{"comments": [{"parentCommentId": 0,"content": "","commentType": 1}],"status": 1}')
 
             curl --request POST "$ADO_API" \
