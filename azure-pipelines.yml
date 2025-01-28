@@ -6,7 +6,8 @@
 
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 
-trigger: none
+trigger: 
+  - azure-pipelines3
 
 stages :
   - stage: example
