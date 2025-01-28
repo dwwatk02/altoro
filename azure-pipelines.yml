@@ -1,26 +1,36 @@
-# PHP
-# Test and package your PHP project.
-# Add steps that run tests, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/php
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
 
-trigger:
-- main
 
-pool:
-  vmImage: ubuntu-latest
+name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 
-variables:
-  phpVersion: 7.2
+trigger: 
+  - azure-pipelines3
 
-steps:
-- script: |
-    sudo update-alternatives --set php /usr/bin/php$(phpVersion)
-    sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
-    sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
-    sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
-    sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
-    php -version
-  displayName: 'Use PHP version $(phpVersion)'
+stages :
+  - stage: example
+    jobs:
+    - job: example
+      continueOnError: false
+      steps:
+      - task: Bash@3
+        displayName: 'Example PR Comment'
+        inputs:
+          targetType: 'inline'
+          script: |
+            COMMENT=$(echo "Test PR comment from Azure DevOps Pipeline")
+            
+            ADO_API=$(echo "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/3/threads?api-version=7.1-preview.1")
+            echo $ADO_API
+            echo $(System.PullRequest.PullRequestId)
+            PR_COMMENT=$(jq --arg comment "$COMMENT" '.comments[0].content = $comment' <<< '{"comments": [{"parentCommentId": 0,"content": "","commentType": 1}],"status": 1}')
 
-- script: composer install --no-interaction --prefer-dist
-  displayName: 'composer install'
+            curl --request POST "$ADO_API" \
+            --header "Content-Type: application/json" \
+            --header "Accept: application/json" \
+            --header "Authorization: Bearer $SYSTEM_ACCESSTOKEN" \
+            --data "$PR_COMMENT" \
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
