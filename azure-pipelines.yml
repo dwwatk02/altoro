@@ -24,7 +24,7 @@ stages :
             
             ADO_API=$(echo "$(System.CollectionUri)$(System.TeamProject)/_apis/git/repositories/$(Build.Repository.Name)/pullRequests/1/threads?api-version=7.1-preview.1")
             echo $ADO_API
-            echo $(System.PullRequest.PullRequestId)
+            echo $SYSTEM_PR_ID
             PR_COMMENT=$(jq --arg comment "$COMMENT" '.comments[0].content = $comment' <<< '{"comments": [{"parentCommentId": 0,"content": "","commentType": 1}],"status": 1}')
 
             curl --request POST "$ADO_API" \
@@ -34,3 +34,4 @@ stages :
             --data "$PR_COMMENT" \
         env:
           SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          SYSTEM_PR_ID: $(System.PullRequest.PullRequestId)
